@@ -1,10 +1,6 @@
 package utils;
 
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
-
-import placeables.Room;
 
 public class ResponsiveCircle extends Ellipse2D.Double
 {

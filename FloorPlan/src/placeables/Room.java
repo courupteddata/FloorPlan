@@ -46,10 +46,6 @@ public class Room extends Rectangle2D.Double
 			{
 			g2D.draw(rC);
 			}
-			else
-			{
-				
-			}
 		}
 	}
 	

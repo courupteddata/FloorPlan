@@ -3,6 +3,7 @@ package panels;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -39,7 +40,13 @@ public class Floor extends JPanel{
 		{
 			if(room != null)
 			{
-				//g2D.draw((Shape) room);
+				room.unfocusCorners();
+				Point tmpPoint = this.getMousePosition();
+				if(tmpPoint != null)
+				{
+					room.focusOnCorner(tmpPoint);
+				}
+				
 				room.draw(g2D);
 			}
 		}
@@ -72,14 +79,6 @@ public class Floor extends JPanel{
 			{
 				super.mouseMoved(me);
 				
-				for(Room room : rooms)
-				{
-					//room.unfocusCorners();
-					if(room != null)
-					{
-						room.focusOnCorner(me.getPoint());
-					}
-				}
 			}
 			
 		});
