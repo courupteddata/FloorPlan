@@ -6,15 +6,19 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
 import placeables.Room;
+import utils.MouseMoving;
 
 public class Floor extends JPanel{
 
 	private static final long serialVersionUID = 1L;
+	
+	private static Point mousePosition;
 	
 	ArrayList<Room> rooms;
 	
@@ -45,6 +49,7 @@ public class Floor extends JPanel{
 				if(tmpPoint != null)
 				{
 					room.focusOnCorner(tmpPoint);
+					mousePosition = getMousePosition();
 				}
 				
 				room.draw(g2D);
@@ -81,6 +86,34 @@ public class Floor extends JPanel{
 				
 			}
 			
+			public void mousePressed(MouseEvent me)
+			{
+				super.mousePressed(me);
+				
+				for(Room room : rooms)
+				{
+					if(room.onCorner(me.getPoint()))
+					{
+						setMouseDown();
+						startThread(room.getFocusedCornerID(), room);
+						mousePosition = getMousePosition();
+					}
+				}
+			}
+			
+			public void mouseReleased(MouseEvent me)
+			{
+				super.mouseReleased(me);
+				
+				setMouseUp();
+			}
+			
+			public void mouseDragged(MouseEvent me)
+			{
+				super.mouseDragged(me);
+							
+			}
+			
 		});
 	}
 	
@@ -98,6 +131,62 @@ public class Floor extends JPanel{
 	{
 		rooms.remove(room);
 	}
+	
+	//Start thread helper methods an starters
+	//--------------------------------------------------
+	private static volatile boolean mouseDown = false;
+	private static volatile boolean isRunning = false;
+
+	
+	private static synchronized boolean safetyCheck()
+	{
+		if(isRunning)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	
+	private static void startThread(int focusedCorner, Room room)
+	{
+		System.out.println("test");
+		if(safetyCheck())
+		{
+			isRunning = true;
+			
+			new Thread()
+			{
+				public void run()
+				{
+					while(mouseDown)
+					{
+						System.out.println(focusedCorner + " " + mousePosition.toString());
+						room.resize(room.getWidth() + mousePosition.x , room.getHeight() + mousePosition.y);
+						
+						
+					}
+					isRunning = false;
+				}
+							
+			}.start();
+		}
+	}
+	
+	private static synchronized void setMouseDown()
+	{
+		mouseDown = true;
+	}
+	
+	private static synchronized void setMouseUp()
+	{
+		mouseDown = false;
+	}
+	
+	//End thread helper methods an starters
+	//--------------------------------------------------
 	
 	
 

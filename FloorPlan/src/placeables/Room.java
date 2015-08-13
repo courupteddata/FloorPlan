@@ -98,6 +98,30 @@ public class Room extends Rectangle2D.Double
 		}
 	}
 	
+	public Point2D.Double getFocusedCornerCoord()
+	{
+		for(ResponsiveCircle rC : corners)
+		{
+			if(rC.isFocused())
+			{
+				return new Point2D.Double(rC.getCenterX(),rC.getCenterY());
+			}
+		}
+		return new Point2D.Double(0, 0);
+	}
+	
+	public int getFocusedCornerID()
+	{
+		for(int i = 0; i < corners.length; i ++)
+		{
+			if(corners[i].isFocused())
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	
 	public void unfocusCorners()
 	{
 		for(ResponsiveCircle rC : corners)
