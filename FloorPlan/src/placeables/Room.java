@@ -133,7 +133,7 @@ public class Room extends Rectangle2D.Double
 	}
 	
 	//0-topLeft,1-topRight,2-bottomRight,3-bottomLeft
-	private Point2D.Double cornerCoord(int corner)
+	public Point2D.Double cornerCoord(int corner)
 	{
 		switch(corner)
 		{

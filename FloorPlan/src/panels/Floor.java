@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import main.Main;
 import placeables.Room;
 import utils.MouseMoving;
 
@@ -163,8 +164,13 @@ public class Floor extends JPanel{
 				{
 					while(mouseDown)
 					{
-						System.out.println(focusedCorner + " " + mousePosition.toString());
+						
+						
+						if(room.cornerCoord(focusedCorner).distance(mousePosition ) < 5 && Main.isReady())
+						{
 						room.resize(room.getWidth() + mousePosition.x , room.getHeight() + mousePosition.y);
+						System.out.println(focusedCorner + " " + mousePosition.toString());
+						}
 						
 						
 					}
