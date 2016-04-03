@@ -32,14 +32,10 @@ public class Frame extends JFrame{
 		
 		addRoom.addActionListener(new ActionListener()
 		{
-
-			
 			public void actionPerformed(ActionEvent arg0) {
 				floor.addRoom(new Room(Math.random() * 400, Math.random() * 400, 50, 50));
-				floor.updatePanel();
-				
+				floor.updatePanel();	
 			}
-			
 		});
 		
 		setVisible(true);

@@ -6,20 +6,21 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-import main.Main;
 import placeables.Room;
+import utils.Threads;
 
 public class Floor extends JPanel
 {
 
     private static final long serialVersionUID = 1L;
 
-    private static Point mousePosition;
+    //private static Point mousePosition;
+    
+    Threads utilThread = new Threads();
 
     ArrayList<Room> rooms;
 
@@ -46,7 +47,7 @@ public class Floor extends JPanel
 		Point tmpPoint = this.getMousePosition();
 		if (tmpPoint != null) {
 		    room.focusOnCorner(tmpPoint);
-		    mousePosition = getMousePosition();
+		    utilThread.setMousePosition(tmpPoint);
 		}
 
 		room.draw(g2D);
@@ -62,15 +63,6 @@ public class Floor extends JPanel
 	    {
 		super.mouseClicked(me);
 		System.out.println(me.getPoint().toString() + " Point");
-
-		/*
-		 * for(Room room : rooms) { if(room.contains(me.getPoint())) {
-		 * room.resize(room.width * 1.2, room.height*1.2);
-		 * updatePanel(); System.out.println(room.getCenterX() + " " +
-		 * me.getPoint().toString()); } if(room.onCorner(me.getPoint()))
-		 * { System.out.println(room.getCenterX() + " " +
-		 * me.getPoint().toString() + " Corner"); } }
-		 */
 	    }
 
 	    @Override
@@ -85,16 +77,16 @@ public class Floor extends JPanel
 	    {
 		super.mousePressed(me);
 
+		utilThread.setMousePosition(getMousePosition());
 		for (Room room : rooms) {
 		    if (room.onCorner(me.getPoint())) {
-			setMouseDown();
-			startThread(room.getFocusedCornerID(), room);
-			mousePosition = getMousePosition();
+			utilThread.setMouseDown();
+			utilThread.startRoomThread(room.getFocusedCornerID(), room);
 		    }
 		    else if (room.contains(me.getPoint())) {
-			setMouseDown();
-			startThread(-1, room);
-			mousePosition = getMousePosition();
+			utilThread.setMouseDown();
+			utilThread.startRoomThread(-1, room);
+			
 		    }
 		}
 	    }
@@ -104,7 +96,7 @@ public class Floor extends JPanel
 	    {
 		super.mouseReleased(me);
 
-		setMouseUp();
+		utilThread.setMouseUp();
 	    }
 
 	    @Override
@@ -132,98 +124,4 @@ public class Floor extends JPanel
     {
 	rooms.remove(room);
     }
-
-    // Start thread helper methods an starters
-    // --------------------------------------------------
-    private static volatile boolean mouseDown = false;
-    private static volatile boolean isRunning = false;
-
-    public static synchronized boolean safetyCheck()
-    {
-	if (isRunning) {
-	    return false;
-	}
-	else {
-	    return true;
-	}
-    }
-
-    private static void startThread(int focusedCorner, Room room)
-    {
-	System.out.println("test");
-	if (safetyCheck()) {
-	    isRunning = true;
-
-	    new Thread() {
-		Point2D tmpPoint;
-		double xChange;
-		double yChange;
-
-		@Override
-		public void run()
-		{
-		    xChange = mousePosition.x - room.getX();
-		    yChange = mousePosition.y - room.getY();
-		    while (mouseDown) {
-
-			if (Main.isReady()) {
-			    if (focusedCorner != -1) {
-				tmpPoint = room.cornerCoord(focusedCorner);
-
-				switch (focusedCorner) {
-				case 0:
-				    room.moveTo(mousePosition.x,
-					    mousePosition.y);
-				    room.addSizeOffSet(
-					    -(mousePosition.x - tmpPoint.getX()),
-					    -(mousePosition.y - tmpPoint.getY()));
-				    break;
-				case 1:
-				    room.moveTo(room.getX(), mousePosition.y);
-				    room.addSizeOffSet(
-					    (mousePosition.x - tmpPoint.getX()),
-					    -(mousePosition.y - tmpPoint.getY()));
-				    break;
-				case 2:
-				    room.addSizeOffSet(
-					    (mousePosition.x - tmpPoint.getX()),
-					    (mousePosition.y - tmpPoint.getY()));
-				    break;
-				case 3:
-				    room.moveTo(mousePosition.x, room.getY());
-				    room.addSizeOffSet(
-					    -(mousePosition.x - tmpPoint.getX()),
-					    (mousePosition.y - tmpPoint.getY()));
-				    break;
-
-				}
-			    }
-			    else {
-
-				room.moveTo(mousePosition.x - xChange,
-					mousePosition.y - yChange);
-			    }
-			}
-
-		    }
-		    isRunning = false;
-		}
-
-	    }.start();
-	}
-    }
-
-    private static synchronized void setMouseDown()
-    {
-	mouseDown = true;
-    }
-
-    private static synchronized void setMouseUp()
-    {
-	mouseDown = false;
-    }
-
-    // End thread helper methods an starters
-    // --------------------------------------------------
-
 }
