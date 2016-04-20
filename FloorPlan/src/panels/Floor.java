@@ -21,8 +21,10 @@ public class Floor extends JPanel
     
     Threads utilThread = new Threads();
     
+    //Tmp code start
     TriangleShape tS = new TriangleShape(200, 200, 500, 100);
-
+    //Tmp code end
+    
     ArrayList<Room> rooms;
 
     public Floor() {
@@ -43,7 +45,11 @@ public class Floor extends JPanel
     {
 	super.paintComponent(g);
 	Graphics2D g2D = (Graphics2D) g;
+	
+	//tmp code start
 	tS.draw(g2D);
+	//tmp code end
+	
 	for (Room room : rooms) {
 	    if (room != null) {
 		room.unfocusCorners();
