@@ -12,15 +12,16 @@ import javax.swing.JPanel;
 
 import placeables.Room;
 import utils.Threads;
+import utils.TriangleShape;
 
 public class Floor extends JPanel
 {
 
     private static final long serialVersionUID = 1L;
-
-    //private static Point mousePosition;
     
     Threads utilThread = new Threads();
+    
+    TriangleShape tS = new TriangleShape(200, 200, 500, 100);
 
     ArrayList<Room> rooms;
 
@@ -28,6 +29,7 @@ public class Floor extends JPanel
 	this.setBackground(Color.WHITE);
 	this.rooms = new ArrayList<Room>();
 	this.addActions();
+	
     }
 
     public Floor(ArrayList<Room> rooms) {
@@ -41,6 +43,7 @@ public class Floor extends JPanel
     {
 	super.paintComponent(g);
 	Graphics2D g2D = (Graphics2D) g;
+	tS.draw(g2D);
 	for (Room room : rooms) {
 	    if (room != null) {
 		room.unfocusCorners();
